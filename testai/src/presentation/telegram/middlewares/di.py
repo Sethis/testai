@@ -19,6 +19,13 @@ class DIMiddleware(BaseMiddleware):
     def __init__(self, client: AsyncClient):
         self._client = client
 
+        self._user_repo = UserRepo(
+            user_gateway=FakeUserGateWay()
+        )
+        self._text_to_response = AssistantTextToResponseInteractor(client=self._client)
+        self._text_to_audio = TTSTextToAudio(client=self._client)
+        self._audio_to_text = WhisperAudioToTextInteractor(client=self._client)
+
     async def __call__(
             self,
             handler: Callable,
@@ -26,13 +33,9 @@ class DIMiddleware(BaseMiddleware):
             data: dict[str, Any],
     ) -> None:
 
-        repo = UserRepo(
-            user_gateway=FakeUserGateWay()
-        )
-
-        data["user_repo"] = repo
-        data["text_to_response"] = AssistantTextToResponseInteractor(client=self._client)
-        data["text_to_audio"] = TTSTextToAudio(client=self._client)
-        data["audio_to_text"] = WhisperAudioToTextInteractor(client=self._client)
+        data["user_repo"] = self._user_repo
+        data["text_to_response"] = self._text_to_response
+        data["text_to_audio"] = self._text_to_audio
+        data["audio_to_text"] = self._audio_to_text
 
         await handler(event, data)
