@@ -38,3 +38,19 @@ async def test_add_assistant():
     user = await fakerepo.get_user_by_id(123)
     assert user.assistants[0].id == "123"
     assert user.assistants[0].name == "some"
+
+
+async def test_add_two_assistant():
+    fakerepo = UserRepo(
+        user_gateway=FakeUserGateWay()
+    )
+
+    await fakerepo.add_assistant(123, "123", "some")
+    await fakerepo.add_assistant(123, "321", "some2")
+
+    user = await fakerepo.get_user_by_id(123)
+    assert user.assistants[0].id == "123"
+    assert user.assistants[0].name == "some"
+
+    assert user.assistants[1].id == "321"
+    assert user.assistants[1].name == "some2"

@@ -45,12 +45,18 @@ class FakeUserGateWay(UserGateWay):
 
     async def add_user_assistants(self, user_id: int, assistant_id: str, assistant_name: str) -> None:
         async def uncommited():
-            self._data[user_id].append(
+            data = self._data[user_id]
+
+            data.append(
                 (assistant_id, assistant_name)
             )
+
+            self._data[user_id] = data
 
         self._not_commited.append(uncommited())
 
     async def commit(self):
         for func in self._not_commited:
             await func
+
+        self._not_commited = []
