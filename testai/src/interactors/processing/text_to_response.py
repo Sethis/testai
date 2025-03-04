@@ -1,6 +1,7 @@
 
 
 from abc import ABC, abstractmethod
+from typing import Optional
 
 from openai import AsyncClient
 
@@ -16,9 +17,7 @@ class TextToResponseInteractor(ABC):
 
     @abstractmethod
     async def new_thread(
-            self,
-            name: str,
-            instructions: str
+            self
     ) -> str:
         raise NotImplementedError()
 
@@ -26,9 +25,9 @@ class TextToResponseInteractor(ABC):
     async def get_response(
             self,
             request: str,
-            instructions: str,
             thread_id: str,
-            assistant_id: str
+            assistant_id: str,
+            instructions: Optional[str] = None,
     ) -> str:
         raise NotImplementedError()
 
@@ -53,9 +52,7 @@ class AssistantTextToResponseInteractor(TextToResponseInteractor):
         return assistant.id
 
     async def new_thread(
-            self,
-            name: str,
-            instructions: str
+            self
     ) -> str:
         thread = await self._client.beta.threads.create()
 
@@ -64,10 +61,16 @@ class AssistantTextToResponseInteractor(TextToResponseInteractor):
     async def get_response(
             self,
             request: str,
-            instructions: str,
             thread_id: str,
-            assistant_id: str
+            assistant_id: str,
+            instructions: Optional[str] = None
     ) -> str:
+        await self._client.beta.threads.messages.create(
+            thread_id=thread_id,
+            role="user",
+            content=request,
+        )
+
         stream = await self._client.beta.threads.runs.create(
             thread_id=thread_id,
             assistant_id=assistant_id,
