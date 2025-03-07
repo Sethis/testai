@@ -1,7 +1,5 @@
 
 
-import pytest
-
 from testai.src.interactors.database.gateways.user import FakeUserGateWay
 from testai.src.interactors.database.repositories.user import UserRepo
 
