@@ -8,6 +8,10 @@ class Config(BaseSettings):
 
     bot_token: str
     openai_key: str
+    database_url: str
+
+    def get_sqlalchemy_database_url(self) -> str:
+        return self.database_url.replace("postgresql", "postgresql+asyncpg")
 
 
 def get_config() -> Config:

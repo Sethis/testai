@@ -3,3 +3,5 @@ aiogram==3.18.0
 pytest==8.3.5
 pytest-asyncio==0.25.3
 pydantic-settings==2.8.1
+SQLAlchemy==2.0.38
+asyncpg==0.30.0
