@@ -357,7 +357,7 @@ async def on_start(
                 temperament=result_data["temperament"],
                 profession=result_data["profession"]
             )
-            await message.answer("Sucess! Check your result in /profile")
+            await message.answer("Success! Check your result in /profile")
 
         else:
             await message.answer("The mental test failed! Try it again /mental")
